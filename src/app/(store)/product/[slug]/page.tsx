@@ -115,9 +115,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                     <span className="flex items-center text-green-600 font-medium"><Check className="h-4 w-4 mr-1"/> In Stock</span>
                   </div>
                 </div>
-                {hasPrice && (
-                  <p className="text-sm text-zinc-500 font-medium">+ Delivery Charges Extra (To be paid at delivery)</p>
-                )}
               </div>
             </div>
 
