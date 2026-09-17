@@ -218,58 +218,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Showroom & Map Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6">Visit Our Premium Showroom</h2>
-              <div className="w-16 h-1 bg-amber-500 rounded-full mb-8" />
-              <p className="text-lg text-zinc-600 mb-8 leading-relaxed">
-                Experience the luxury, comfort, and craftsmanship of AR Furniture in person. Our design experts are ready to help you find or customize the perfect pieces for your home.
-              </p>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 mt-1 bg-zinc-100 p-3 rounded-full text-zinc-900">
-                    <MapPin className="h-6 w-6 text-amber-600" />
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="text-lg font-bold text-zinc-900">Address</h4>
-                    <p className="text-zinc-600 mt-1">1-2 Shashtri Nagar, Nr. Purnima Nagar,<br/>New VIP Road, Vadodara, Gujarat</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 mt-1 bg-zinc-100 p-3 rounded-full text-zinc-900">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="text-lg font-bold text-zinc-900">Contact</h4>
-                    <p className="text-zinc-600 mt-1"><a href="tel:8511939151" className="hover:text-amber-600">8511939151</a></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-12 lg:mt-0">
-              <div className="rounded-2xl overflow-hidden shadow-lg border border-zinc-200 h-[400px]">
-                <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14766.195610738374!2d73.2081!3d22.2952!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDE3JzQyLjciTiA3M8KwMTInMjkuMiJF!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin" 
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 0 }} 
-                  allowFullScreen={true} 
-                  loading="lazy"
-                ></iframe>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Location CTA */}
       <section className="py-24 bg-amber-50 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between">
@@ -294,9 +242,8 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="md:w-5/12 w-full h-[400px] bg-zinc-200 rounded-2xl overflow-hidden shadow-xl border-4 border-white">
-            {/* Google Maps Embed placeholder */}
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14766.155700813733!2d73.2081283!3d22.3168285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc8aa3bc84569%3A0xc68297b5e40702c2!2sVadodara%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.010395550639!2d73.23101199999999!3d22.315446599999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fcf48f812ccc9%3A0xcca1c1480fc52a68!2sAR%20FURNITURE!5e0!3m2!1sen!2sin!4v1789635051746!5m2!1sen!2sin" 
               width="100%" 
               height="100%" 
               style={{ border: 0 }} 
