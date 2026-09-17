@@ -36,6 +36,10 @@ export default async function StoreLayout({
               <li><Link href="/shop" className="hover:text-amber-500 transition-colors">Shop</Link></li>
               <li><Link href="/about" className="hover:text-amber-500 transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="hover:text-amber-500 transition-colors">Contact</Link></li>
+              <li className="pt-2"><Link href="/terms" className="hover:text-amber-500 transition-colors text-zinc-500">Terms & Conditions</Link></li>
+              <li><Link href="/privacy-policy" className="hover:text-amber-500 transition-colors text-zinc-500">Privacy Policy</Link></li>
+              <li><Link href="/refund-policy" className="hover:text-amber-500 transition-colors text-zinc-500">Refund Policy</Link></li>
+              <li><Link href="/shipping-policy" className="hover:text-amber-500 transition-colors text-zinc-500">Shipping Policy</Link></li>
             </ul>
           </div>
           <div>
