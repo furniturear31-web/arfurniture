@@ -267,6 +267,8 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
 
       {/* Location CTA */}
       <section className="py-24 bg-amber-50 relative overflow-hidden">
