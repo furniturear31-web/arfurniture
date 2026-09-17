@@ -184,31 +184,89 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-20 bg-zinc-950 text-white">
+      {/* Customer Testimonials (Social Proof) */}
+      <section className="py-20 bg-zinc-50 border-t border-zinc-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose AR Furniture</h2>
-            <div className="w-16 h-1 bg-amber-500 mx-auto rounded-full" />
+            <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-4">What Our Customers Say</h2>
+            <div className="w-16 h-1 bg-amber-500 mx-auto rounded-full mb-6" />
+            <p className="max-w-2xl mx-auto text-zinc-600">Loved by hundreds of happy families across Vadodara.</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: 'Premium Quality', desc: 'Crafted with high-grade materials for durability and comfort.' },
-              { title: 'Customisation Available', desc: 'Get furniture made exactly to your space and style requirements.' },
-              { title: 'Direct Furniture Source', desc: 'Eliminating middlemen to bring you the best value.' },
-              { title: 'Modern Designs', desc: 'Contemporary aesthetics that elevate your living spaces.' },
-              { title: 'Trusted Service', desc: 'Reliable delivery and after-sales support in Vadodara.' }
-            ].map((feature, i) => (
-              <div key={i} className="bg-zinc-900 p-8 rounded-2xl border border-zinc-800">
-                <CheckCircle2 className="h-10 w-10 text-amber-500 mb-6" />
-                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-zinc-400 leading-relaxed">{feature.desc}</p>
+              { name: 'Rakesh Patel', role: 'Vadodara', review: 'Absolutely stunning quality! We ordered a custom L-shape sofa and it fits perfectly in our living room. Highly recommend AR Furniture for their premium finish.' },
+              { name: 'Sneha Shah', role: 'Ahmedabad', review: 'The design consultation was very helpful. They suggested the right fabric for my dining chairs to match my interior. Delivery was on time and flawless.' },
+              { name: 'Amit Desai', role: 'Vadodara', review: 'Bought a modern TV unit. The craftsmanship is top-notch. It looks exactly like the 3D design they showed us. Very professional team!' },
+            ].map((testimonial, i) => (
+              <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-zinc-100 relative">
+                <div className="flex text-amber-500 mb-4">
+                  {[...Array(5)].map((_, j) => (
+                    <svg key={j} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-zinc-700 leading-relaxed mb-6">"{testimonial.review}"</p>
+                <div>
+                  <p className="font-bold text-zinc-900">{testimonial.name}</p>
+                  <p className="text-sm text-zinc-500">{testimonial.role}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Showroom & Map Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6">Visit Our Premium Showroom</h2>
+              <div className="w-16 h-1 bg-amber-500 rounded-full mb-8" />
+              <p className="text-lg text-zinc-600 mb-8 leading-relaxed">
+                Experience the luxury, comfort, and craftsmanship of AR Furniture in person. Our design experts are ready to help you find or customize the perfect pieces for your home.
+              </p>
+              
+              <div className="space-y-6">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 mt-1 bg-zinc-100 p-3 rounded-full text-zinc-900">
+                    <MapPin className="h-6 w-6 text-amber-600" />
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="text-lg font-bold text-zinc-900">Address</h4>
+                    <p className="text-zinc-600 mt-1">1-2 Shashtri Nagar, Nr. Purnima Nagar,<br/>New VIP Road, Vadodara, Gujarat</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 mt-1 bg-zinc-100 p-3 rounded-full text-zinc-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="text-lg font-bold text-zinc-900">Contact</h4>
+                    <p className="text-zinc-600 mt-1"><a href="tel:8511939151" className="hover:text-amber-600">8511939151</a></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-12 lg:mt-0">
+              <div className="rounded-2xl overflow-hidden shadow-lg border border-zinc-200 h-[400px]">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14766.195610738374!2d73.2081!3d22.2952!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDE3JzQyLjciTiA3M8KwMTInMjkuMiJF!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin" 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen={true} 
+                  loading="lazy"
+                ></iframe>
+              </div>
+            </div>
+          </div>
 
       {/* Location CTA */}
       <section className="py-24 bg-amber-50 relative overflow-hidden">

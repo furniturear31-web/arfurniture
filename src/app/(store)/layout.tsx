@@ -10,9 +10,15 @@ export default async function StoreLayout({
 }) {
   const supabase = await createClient()
   const { data: categories } = await supabase.from('categories').select('*').eq('is_active', true)
+  const { data: settings } = await supabase.from('store_settings').select('*').eq('id', true).maybeSingle()
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50 font-sans overflow-x-hidden">
+      {settings?.is_announcement_active && (
+        <div className="bg-amber-600 text-white text-center py-2 px-4 text-sm font-medium tracking-wide">
+          {settings.announcement_text}
+        </div>
+      )}
       <Header categories={categories || []} />
 
       {/* Main Content */}
@@ -36,6 +42,7 @@ export default async function StoreLayout({
               <li><Link href="/shop" className="hover:text-amber-500 transition-colors">Shop</Link></li>
               <li><Link href="/about" className="hover:text-amber-500 transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="hover:text-amber-500 transition-colors">Contact</Link></li>
+              <li><Link href="/faq" className="hover:text-amber-500 transition-colors">FAQs</Link></li>
               <li className="pt-2"><Link href="/terms" className="hover:text-amber-500 transition-colors text-zinc-500">Terms & Conditions</Link></li>
               <li><Link href="/privacy-policy" className="hover:text-amber-500 transition-colors text-zinc-500">Privacy Policy</Link></li>
               <li><Link href="/refund-policy" className="hover:text-amber-500 transition-colors text-zinc-500">Refund Policy</Link></li>
