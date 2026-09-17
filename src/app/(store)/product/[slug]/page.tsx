@@ -103,16 +103,21 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               )}
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 mt-2 mb-4">{product.name}</h1>
               
-              <div className="flex items-center justify-between">
-                {hasPrice ? (
-                  <p className="text-3xl tracking-tight text-zinc-900 font-bold">₹{product.price.toLocaleString('en-IN')}</p>
-                ) : (
-                  <p className="text-2xl tracking-tight text-amber-600 font-medium">Price on Request</p>
-                )}
-                
-                <div className="flex items-center text-sm">
-                  <span className="flex items-center text-green-600 font-medium"><Check className="h-4 w-4 mr-1"/> In Stock</span>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center justify-between">
+                  {hasPrice ? (
+                    <p className="text-3xl tracking-tight text-zinc-900 font-bold">₹{product.price.toLocaleString('en-IN')}</p>
+                  ) : (
+                    <p className="text-2xl tracking-tight text-amber-600 font-medium">Price on Request</p>
+                  )}
+                  
+                  <div className="flex items-center text-sm">
+                    <span className="flex items-center text-green-600 font-medium"><Check className="h-4 w-4 mr-1"/> In Stock</span>
+                  </div>
                 </div>
+                {hasPrice && (
+                  <p className="text-sm text-zinc-500 font-medium">+ Delivery Charges Extra (To be paid at delivery)</p>
+                )}
               </div>
             </div>
 

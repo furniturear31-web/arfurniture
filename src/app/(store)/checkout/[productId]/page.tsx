@@ -41,6 +41,10 @@ export default async function CheckoutPage({ params }: { params: Promise<{ produ
             <div>
               <h2 className="text-xl font-bold">{product.name}</h2>
               <p className="text-amber-500 font-medium text-lg mt-1">₹{product.price.toLocaleString('en-IN')}</p>
+              <p className="text-zinc-400 text-sm mt-1">
+                + Delivery Charges Extra <br className="sm:hidden" />
+                <span className="opacity-75">(To be paid at delivery)</span>
+              </p>
             </div>
           </div>
           
