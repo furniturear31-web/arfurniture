@@ -42,10 +42,6 @@ export default async function AdminLayout({
             <ShoppingCart className="mr-3 h-5 w-5" />
             Orders
           </Link>
-          <Link href="/admin/inquiries" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-md hover:bg-zinc-800 hover:text-white transition-colors">
-            <MessageSquare className="mr-3 h-5 w-5" />
-            Inquiries
-          </Link>
         </nav>
         <div className="p-4 border-t border-zinc-800">
           <form action={async () => {
