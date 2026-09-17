@@ -57,8 +57,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             Back to Shop
           </Link>
           
-          <nav className="flex text-sm text-zinc-500" aria-label="Breadcrumb">
-            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+          <nav className="flex text-sm text-zinc-500 overflow-hidden" aria-label="Breadcrumb">
+            <ol className="flex flex-wrap items-center gap-y-2 space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
               <Link href="/" className="hover:text-zinc-900">Home</Link>
             </li>

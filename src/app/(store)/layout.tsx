@@ -12,7 +12,7 @@ export default async function StoreLayout({
   const { data: categories } = await supabase.from('categories').select('*').eq('is_active', true)
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-50 font-sans">
+    <div className="min-h-screen flex flex-col bg-zinc-50 font-sans overflow-x-hidden">
       <Header categories={categories || []} />
 
       {/* Main Content */}
