@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .eq('is_active', true)
 
   const productUrls = products?.map((product) => ({
-    url: `https://arfurniture-one.vercel.app/product/${product.slug}`,
+    url: `https://www.arfurniture.co.in/product/${product.slug}`,
     lastModified: new Date(product.updated_at),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .eq('is_active', true)
 
   const categoryUrls = categories?.map((category) => ({
-    url: `https://arfurniture-one.vercel.app/shop?category=${category.slug}`,
+    url: `https://www.arfurniture.co.in/shop?category=${category.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
@@ -32,31 +32,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: 'https://arfurniture-one.vercel.app',
+      url: 'https://www.arfurniture.co.in',
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
     },
     {
-      url: 'https://arfurniture-one.vercel.app/shop',
+      url: 'https://www.arfurniture.co.in/shop',
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
     },
     {
-      url: 'https://arfurniture-one.vercel.app/about',
+      url: 'https://www.arfurniture.co.in/about',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
-      url: 'https://arfurniture-one.vercel.app/contact',
+      url: 'https://www.arfurniture.co.in/contact',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
-      url: 'https://arfurniture-one.vercel.app/faq',
+      url: 'https://www.arfurniture.co.in/faq',
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.5,

@@ -46,8 +46,32 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const whatsappMessage = encodeURIComponent(`Hello AR Furniture, I am interested in ${product.name}. Please share the price and details.`)
   const whatsappLink = `https://wa.me/918511939151?text=${whatsappMessage}`
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: images,
+    description: product.description,
+    offers: {
+      '@type': 'Offer',
+      url: `https://www.arfurniture.co.in/product/${product.slug}`,
+      priceCurrency: 'INR',
+      price: product.price || 0,
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: 'https://schema.org/InStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'AR FURNITURE'
+      }
+    }
+  }
+
   return (
     <div className="bg-white py-12 md:py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Back Button & Breadcrumb */}

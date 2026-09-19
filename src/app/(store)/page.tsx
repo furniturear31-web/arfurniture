@@ -17,8 +17,49 @@ export default async function HomePage() {
     .eq('is_featured', true)
     .limit(8)
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FurnitureStore',
+    name: 'AR FURNITURE',
+    image: 'https://www.arfurniture.co.in/images/logo.png', // Replace with actual logo URL if available
+    '@id': 'https://www.arfurniture.co.in',
+    url: 'https://www.arfurniture.co.in',
+    telephone: '+918511939151',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '1-2 Shashtri Nagar, Nr. Purnima Nagar, New VIP Road',
+      addressLocality: 'Vadodara',
+      addressRegion: 'GJ',
+      postalCode: '390022',
+      addressCountry: 'IN'
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 22.3154466,
+      longitude: 73.231012
+    },
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday'
+      ],
+      opens: '10:00',
+      closes: '20:00'
+    }
+  }
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero Section */}
       <section className="relative bg-zinc-900 text-white min-h-[600px] flex items-center">
         <div className="absolute inset-0 z-0">
