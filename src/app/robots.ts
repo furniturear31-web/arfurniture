@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin/', '/checkout/'],
     },
-    sitemap: 'https://www.arfurniture.co.in/sitemap.xml',
+    sitemap: 'https://arfurniture.co.in/sitemap.xml',
   }
 }

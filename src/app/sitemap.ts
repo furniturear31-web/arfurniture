@@ -11,8 +11,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .eq('is_active', true)
 
   const productUrls = products?.map((product) => ({
-    url: `https://www.arfurniture.co.in/product/${product.slug}`,
-    lastModified: new Date(product.updated_at),
+    url: `https://arfurniture.co.in/product/${product.slug}`,
+    lastModified: product.updated_at ? new Date(product.updated_at) : new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   })) || []
@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .eq('is_active', true)
 
   const categoryUrls = categories?.map((category) => ({
-    url: `https://www.arfurniture.co.in/shop?category=${category.slug}`,
+    url: `https://arfurniture.co.in/shop?category=${category.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
@@ -32,31 +32,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: 'https://www.arfurniture.co.in',
+      url: 'https://arfurniture.co.in',
       lastModified: new Date(),
       changeFrequency: 'daily',
-      priority: 1,
+      priority: 1.0,
     },
     {
-      url: 'https://www.arfurniture.co.in/shop',
+      url: 'https://arfurniture.co.in/shop',
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
     },
     {
-      url: 'https://www.arfurniture.co.in/about',
+      url: 'https://arfurniture.co.in/about',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
-      url: 'https://www.arfurniture.co.in/contact',
+      url: 'https://arfurniture.co.in/contact',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
-      url: 'https://www.arfurniture.co.in/faq',
+      url: 'https://arfurniture.co.in/faq',
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.5,
