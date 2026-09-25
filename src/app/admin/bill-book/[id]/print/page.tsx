@@ -288,7 +288,7 @@ export default function PrintBillPage() {
                       payments.map((p, idx) => (
                         <div key={p.id || idx} className="flex justify-between">
                           <span className="text-zinc-500">Payment Received:</span>
-                          <span className="font-bold text-zinc-900">₹{p.amount.toLocaleString('en-IN')} ({p.payment_mode || 'Cash'})</span>
+                          <span className="font-bold text-zinc-900">₹{p.amount.toLocaleString('en-IN')} ({p.payment_mode || invoice.payment_mode || 'Cash'})</span>
                         </div>
                       ))
                     ) : invoice.paid_amount > 0 ? (

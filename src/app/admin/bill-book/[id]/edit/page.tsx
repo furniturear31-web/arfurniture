@@ -140,6 +140,7 @@ export default function EditBillBookPage() {
         customer_address: customerAddress,
         document_type: documentType,
         created_by: createdBy,
+        payment_mode: paymentMode,
         subtotal,
         discount,
         total_amount: totalAmount,

@@ -28,64 +28,83 @@ export default function ClientsPage() {
     const supabase = createClient()
 
     // 1. Fetch raw clients, invoices, and payments
-    let { data: clientsData } = await supabase.from('clients').select('*').order('full_name')
-    const { data: invoicesData } = await supabase.from('invoices').select('id, client_id, customer_name, customer_mobile, customer_address, total_amount, paid_amount, created_at')
-    const { data: paymentsData } = await supabase.from('payments').select('id, invoice_id, client_mobile, amount, created_at')
+    const [{ data: clientsData }, { data: invoicesData }, { data: paymentsData }] = await Promise.all([
+      supabase.from('clients').select('*').order('full_name'),
+      supabase.from('invoices').select('id, client_id, customer_name, customer_mobile, customer_address, total_amount, paid_amount, created_at'),
+      supabase.from('payments').select('id, invoice_id, client_mobile, amount, created_at')
+    ])
 
-    const currentClients = clientsData ? [...clientsData] : []
+    // 2. Build a unified client map using clean 10-digit mobile numbers
+    const clientMap = new Map<string, { id: string; full_name: string; mobile: string; address?: string; city?: string }>()
 
-    // 2. AUTO-HEAL: If invoices exist for customers not yet in clients table, auto-insert them into clients table
+    // Add existing clients from DB
+    if (clientsData && clientsData.length > 0) {
+      clientsData.forEach(c => {
+        const cleanMobile = (c.mobile || '').replace(/\D/g, '').slice(-10)
+        if (cleanMobile) {
+          clientMap.set(cleanMobile, {
+            id: c.id,
+            full_name: c.full_name,
+            mobile: cleanMobile,
+            address: c.address || '',
+            city: c.city || 'Vadodara'
+          })
+        }
+      })
+    }
+
+    // Auto-discover customers from Invoices and add to clientMap
     if (invoicesData && invoicesData.length > 0) {
       for (const inv of invoicesData) {
         if (inv.customer_mobile && inv.customer_name) {
           const invCleanMobile = inv.customer_mobile.replace(/\D/g, '').slice(-10)
           if (!invCleanMobile) continue
 
-          const exists = currentClients.some(c => {
-            const cCleanMobile = (c.mobile || '').replace(/\D/g, '').slice(-10)
-            return (inv.client_id && inv.client_id === c.id) || (cCleanMobile && cCleanMobile === invCleanMobile)
-          })
+          if (!clientMap.has(invCleanMobile)) {
+            clientMap.set(invCleanMobile, {
+              id: inv.client_id || `temp-${invCleanMobile}`,
+              full_name: inv.customer_name.trim(),
+              mobile: invCleanMobile,
+              address: inv.customer_address || '',
+              city: 'Vadodara'
+            })
 
-          if (!exists) {
-            const { data: newClient, error: insErr } = await supabase
-              .from('clients')
-              .insert({
-                full_name: inv.customer_name.trim(),
-                mobile: invCleanMobile,
-                address: inv.customer_address || null,
-                city: 'Vadodara'
-              })
-              .select()
-              .maybeSingle()
-
-            if (newClient) {
-              currentClients.push(newClient)
-              // Auto-link client_id back to invoice if missing
-              if (!inv.client_id) {
-                await supabase.from('invoices').update({ client_id: newClient.id }).eq('id', inv.id)
-              }
-            } else if (insErr) {
-              console.error('Auto heal client creation failed:', insErr)
+            // Background attempt to persist in DB
+            const trySaveClient = async () => {
+              try {
+                const { data: created } = await supabase.from('clients').insert({
+                  full_name: inv.customer_name.trim(),
+                  mobile: invCleanMobile,
+                  address: inv.customer_address || null,
+                  city: 'Vadodara'
+                }).select().maybeSingle()
+                if (created?.id && inv.id && !inv.client_id) {
+                  await supabase.from('invoices').update({ client_id: created.id }).eq('id', inv.id)
+                }
+              } catch {}
             }
+            trySaveClient()
           }
         }
       }
     }
 
-    if (currentClients.length === 0) {
+    const unifiedClients = Array.from(clientMap.values())
+
+    if (unifiedClients.length === 0) {
       setClients([])
       setLoading(false)
       return
     }
 
     // 3. 360-Degree Khata / Ledger Calculation per Client
-    const ledger: ClientLedger[] = currentClients.map(c => {
-      const cCleanMobile = (c.mobile || '').replace(/\D/g, '').slice(-10)
+    const ledger: ClientLedger[] = unifiedClients.map(c => {
+      const cCleanMobile = c.mobile
 
       // Find all invoices linked to this client by ID or Mobile
       const orders = (invoicesData || []).filter(inv => {
         const invCleanMobile = (inv.customer_mobile || '').replace(/\D/g, '').slice(-10)
-        return (inv.client_id && inv.client_id === c.id) || (invCleanMobile && cCleanMobile && invCleanMobile === cCleanMobile)
+        return (inv.client_id && inv.client_id === c.id) || (invCleanMobile && invCleanMobile === cCleanMobile)
       })
 
       // Total business volume
@@ -101,7 +120,7 @@ export default function ClientsPage() {
       // Standalone payments against client mobile
       const standalonePays = (paymentsData || []).filter(p => {
         const pCleanMobile = (p.client_mobile || '').replace(/\D/g, '').slice(-10)
-        return pCleanMobile && cCleanMobile && pCleanMobile === cCleanMobile && (!p.invoice_id || !orders.some(o => o.id === p.invoice_id))
+        return pCleanMobile && pCleanMobile === cCleanMobile && (!p.invoice_id || !orders.some(o => o.id === p.invoice_id))
       })
       const standaloneSum = standalonePays.reduce((acc, p) => acc + Number(p.amount || 0), 0)
 
@@ -195,13 +214,13 @@ export default function ClientsPage() {
                           <User size={20} />
                         </div>
                         <div>
-                          <p className="font-bold text-zinc-900">{c.full_name}</p>
+                          <p className="font-bold text-zinc-900 text-base">{c.full_name}</p>
                           <p className="text-xs text-zinc-500 flex items-center gap-1 font-semibold"><Phone size={11} /> +91 {c.mobile}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right text-zinc-700 font-bold">{c.total_orders}</td>
-                    <td className="px-6 py-4 text-right font-bold text-zinc-900">₹{c.total_business.toLocaleString('en-IN')}</td>
+                    <td className="px-6 py-4 text-right font-bold text-zinc-900 text-base">₹{c.total_business.toLocaleString('en-IN')}</td>
                     <td className="px-6 py-4 text-right font-bold text-emerald-600">₹{c.total_paid.toLocaleString('en-IN')}</td>
                     <td className="px-6 py-4 text-right">
                       <span className={`font-black text-base ${c.pending > 0 ? 'text-red-600 bg-red-50 px-2.5 py-1 rounded-lg border border-red-200' : 'text-zinc-400'}`}>
@@ -211,21 +230,23 @@ export default function ClientsPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center gap-2">
                         <Link 
-                          href={`/admin/clients/${c.id}`} 
+                          href={c.id.startsWith('temp-') ? `/admin/bill-book` : `/admin/clients/${c.id}`} 
                           className="flex items-center gap-1 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-bold rounded-lg border border-zinc-200" 
                           title="View Ledger & Profile"
                         >
                           Profile <ArrowRight size={12} />
                         </Link>
+                        {!c.id.startsWith('temp-') && (
+                          <Link 
+                            href={`/admin/clients/${c.id}/edit`} 
+                            className="p-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-bold rounded-lg border border-zinc-200" 
+                            title="Edit Client"
+                          >
+                            <Edit size={14} />
+                          </Link>
+                        )}
                         <Link 
-                          href={`/admin/clients/${c.id}/edit`} 
-                          className="p-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-bold rounded-lg border border-zinc-200" 
-                          title="Edit Client"
-                        >
-                          <Edit size={14} />
-                        </Link>
-                        <Link 
-                          href={`/admin/bill-book/new?client_id=${c.id}&mobile=${c.mobile}&name=${encodeURIComponent(c.full_name)}`} 
+                          href={`/admin/bill-book/new?mobile=${c.mobile}&name=${encodeURIComponent(c.full_name)}`} 
                           className="flex items-center gap-1 px-3 py-1.5 bg-[#c8941a] hover:bg-[#b08115] text-white text-xs font-bold rounded-lg shadow-xs" 
                           title="New Order for Client"
                         >

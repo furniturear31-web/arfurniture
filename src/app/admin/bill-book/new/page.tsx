@@ -151,6 +151,7 @@ function NewBillBookForm() {
         customer_address: customerAddress ? customerAddress.trim() : null,
         document_type: documentType,
         created_by: createdBy,
+        payment_mode: paymentMode,
         subtotal,
         discount,
         total_amount: totalAmount,
