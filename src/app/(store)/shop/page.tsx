@@ -64,10 +64,10 @@ export default async function ShopPage({
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Sidebar Filters - Sticky and Premium */}
-          <aside className="lg:w-64 flex-shrink-0">
-             <div className="sticky top-28 bg-zinc-900 p-6 rounded-2xl shadow-2xl border border-zinc-800">
+          <aside className="lg:w-64 flex-shrink-0 sticky top-28">
+             <div className="bg-zinc-900 p-6 rounded-2xl shadow-2xl border border-zinc-800">
                 <div className="flex items-center mb-6 border-b border-zinc-800 pb-4">
                   <Filter className="h-5 w-5 text-amber-500 mr-2" />
                   <h3 className="font-semibold text-white tracking-wide uppercase text-sm">Collections</h3>
