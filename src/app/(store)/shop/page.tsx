@@ -67,10 +67,10 @@ export default async function ShopPage({
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Sidebar Filters - Sticky and Premium */}
           <aside className="lg:w-64 flex-shrink-0 sticky top-28">
-             <div className="bg-zinc-900 p-6 rounded-2xl shadow-2xl border border-zinc-800">
-                <div className="flex items-center mb-6 border-b border-zinc-800 pb-4">
-                  <Filter className="h-5 w-5 text-amber-500 mr-2" />
-                  <h3 className="font-semibold text-white tracking-wide uppercase text-sm">Collections</h3>
+             <div className="bg-white p-6 rounded-2xl shadow-sm border border-zinc-200">
+                <div className="flex items-center mb-6 border-b border-zinc-100 pb-4">
+                  <Filter className="h-5 w-5 text-amber-600 mr-2" />
+                  <h3 className="font-semibold text-zinc-900 tracking-wide uppercase text-sm">Collections</h3>
                 </div>
                 <ul className="space-y-2">
                   {categories.map(c => {
@@ -81,8 +81,8 @@ export default async function ShopPage({
                           href={`/shop?category=${c.slug}`} 
                           className={`block px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
                             isActive 
-                              ? 'bg-zinc-800 text-amber-500 shadow-md border-l-4 border-amber-500' 
-                              : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                              ? 'bg-amber-50 text-amber-700 shadow-sm border-l-4 border-amber-500' 
+                              : 'text-zinc-600 hover:text-amber-600 hover:bg-zinc-50'
                           }`}
                         >
                           {c.name}
