@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import sharp from 'sharp'
 
+const OVERALL_IMAGE_LIMIT = 300
+
 export async function addProduct(formData: FormData) {
   const supabase = await createClient()
 
@@ -20,6 +22,22 @@ export async function addProduct(formData: FormData) {
   const is_featured = formData.get('is_featured') === 'on'
   
   const images = formData.getAll('images') as File[]
+  const validImages = images.filter(f => f.size > 0)
+
+  // Check overall 300 product images limit
+  const { count: totalImagesCount } = await supabase
+    .from('product_images')
+    .select('*', { count: 'exact', head: true })
+
+  const currentCount = totalImagesCount || 0
+  if (currentCount >= OVERALL_IMAGE_LIMIT) {
+    return { error: `Overall limit of ${OVERALL_IMAGE_LIMIT} product images reached! You currently have ${currentCount} images. Please delete some old product images before uploading new ones.` }
+  }
+
+  if (currentCount + validImages.length > OVERALL_IMAGE_LIMIT) {
+    const allowed = OVERALL_IMAGE_LIMIT - currentCount
+    return { error: `Uploading ${validImages.length} images exceeds the overall limit of ${OVERALL_IMAGE_LIMIT} images! You can only upload ${allowed} more image(s). Current total: ${currentCount}/${OVERALL_IMAGE_LIMIT}.` }
+  }
 
   // Insert product first
   const { data: product, error: productError } = await supabase
@@ -36,19 +54,13 @@ export async function addProduct(formData: FormData) {
   }
 
   // Process and upload images
-  for (let i = 0; i < images.length; i++) {
-    const file = images[i]
-    if (file.size === 0) continue
+  for (let i = 0; i < validImages.length; i++) {
+    const file = validImages[i]
 
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // Process image with Sharp
-    // 1:1 aspect ratio, fit inside, padding with transparent/white, or cover
-    // The requirement says "do not stretch or distort".
-    // We'll use 'contain' with a specific background, or 'cover'. Let's use cover (crop) to ensure it fills the 1:1 square.
-    // Wait, "Keep the important furniture area visible" - cover might cut edges. "crop/fit it into a 1:1 square" 
-    // We can use 'contain' with a white/transparent background, or just 'cover'. Cover is standard for e-commerce. Let's use 'cover'.
+    // Process image with Sharp to 1:1 ratio 800x800 webp
     const processedBuffer = await sharp(buffer)
       .resize(800, 800, {
         fit: 'contain',
