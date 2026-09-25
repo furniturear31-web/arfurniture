@@ -40,6 +40,19 @@ export default function PrintBillPage() {
     loadInvoice()
   }, [params.id])
 
+  useEffect(() => {
+    if (invoice) {
+      const cleanClient = (invoice.customer_name || 'Client').trim().replace(/[^a-zA-Z0-9]/g, '_')
+      const cleanDocType = (invoice.document_type || 'Bill').trim().replace(/[^a-zA-Z0-9]/g, '_')
+      const cleanInvNum = (invoice.invoice_number || '').trim().replace(/[^a-zA-Z0-9]/g, '_')
+      const primaryItem = items?.[0]?.description ? items[0].description.trim().replace(/[^a-zA-Z0-9]/g, '_') : ''
+      
+      const parts = ['AR_FURNITURE', cleanDocType, cleanInvNum, cleanClient]
+      if (primaryItem) parts.push(primaryItem)
+      document.title = parts.filter(Boolean).join('_')
+    }
+  }, [invoice, items])
+
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-zinc-50 font-sans text-zinc-600 font-semibold">Loading AR Furniture Document...</div>
   if (!invoice) return <div className="min-h-screen flex items-center justify-center bg-zinc-50 font-sans text-zinc-600 font-semibold">Document not found.</div>
 
@@ -97,8 +110,9 @@ export default function PrintBillPage() {
       
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          @page { size: A4; margin: 0; }
+          @page { size: A4 portrait; margin: 0; }
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white !important; margin: 0 !important; padding: 0 !important; }
+          html, body { width: 210mm !important; height: 297mm !important; max-height: 297mm !important; overflow: hidden !important; }
         }
       `}} />
 
@@ -135,10 +149,10 @@ export default function PrintBillPage() {
 
       {/* A4 Printable Container */}
       <div className="w-full overflow-x-auto print:overflow-visible flex justify-start sm:justify-center px-4 sm:px-0 pb-10 print:pb-0">
-        <div className="w-[800px] shrink-0 bg-white shadow-2xl print:shadow-none print:w-full overflow-hidden relative flex flex-col" style={{ minHeight: '1123px' }}>
+        <div className="w-[800px] print:w-[210mm] print:h-[297mm] print:max-h-[297mm] shrink-0 bg-white shadow-2xl print:shadow-none overflow-hidden relative flex flex-col justify-between" style={{ minHeight: '1123px' }}>
         
         {/* AR Furniture Premium Distinct Header Header Banner */}
-        <div className={`p-8 ${theme.headerBg} text-white relative overflow-hidden shrink-0 border-b-4 border-[#c8941a]`}>
+        <div className={`p-8 print:p-5 ${theme.headerBg} text-white relative overflow-hidden shrink-0 border-b-4 border-[#c8941a]`}>
           
           {/* Subtle gold grid line accent background */}
           <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#c8941a 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
@@ -171,8 +185,8 @@ export default function PrintBillPage() {
         </div>
 
         {/* Client & Billing Info Cards */}
-        <div className="p-8 grid grid-cols-2 gap-6 shrink-0 bg-zinc-50/50 border-b border-zinc-200">
-          <div className="bg-white p-5 rounded-2xl border border-zinc-200/80 shadow-xs">
+        <div className="p-8 print:px-6 print:py-3 grid grid-cols-2 gap-6 print:gap-4 shrink-0 bg-zinc-50/50 border-b border-zinc-200">
+          <div className="bg-white p-5 print:p-3 rounded-2xl border border-zinc-200/80 shadow-xs">
             <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-2 border-b border-zinc-100 pb-1">
               {docType === 'Receipt' ? 'RECEIVED BY (SUPPLIER)' :
                docType === 'Order Form' ? 'ORDER FROM (SUPPLIER)' :
@@ -189,7 +203,7 @@ export default function PrintBillPage() {
             </p>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-zinc-200/80 shadow-xs text-right">
+          <div className="bg-white p-5 print:p-3 rounded-2xl border border-zinc-200/80 shadow-xs text-right">
             <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-2 border-b border-zinc-100 pb-1">
               {docType === 'Receipt' ? 'RECEIVED FROM (CLIENT)' :
                docType === 'Order Form' ? 'ORDER TO (CLIENT)' :
@@ -205,33 +219,33 @@ export default function PrintBillPage() {
         </div>
 
         {/* Itemized Table Section */}
-        <div className="p-8 shrink-0">
+        <div className="p-8 print:px-6 print:py-2 shrink-0">
           <div className="rounded-xl overflow-hidden border border-zinc-200">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className={`${theme.tableHeadBg} text-white text-xs font-bold uppercase tracking-wider`}>
-                  <th className="py-3 px-4 w-12 text-center">#</th>
-                  <th className="py-3 px-4">Item Description</th>
-                  <th className="py-3 px-4 text-center w-28">Rate</th>
-                  <th className="py-3 px-4 text-center w-20">Qty</th>
-                  <th className="py-3 px-4 text-right w-32">Amount</th>
+                  <th className="py-2.5 print:py-1.5 px-4 w-12 text-center">#</th>
+                  <th className="py-2.5 print:py-1.5 px-4">Item Description</th>
+                  <th className="py-2.5 print:py-1.5 px-4 text-center w-28">Rate</th>
+                  <th className="py-2.5 print:py-1.5 px-4 text-center w-20">Qty</th>
+                  <th className="py-2.5 print:py-1.5 px-4 text-right w-32">Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 text-sm">
                 {items.map((item, index) => (
                   <tr key={item.id} className="hover:bg-zinc-50/50">
-                    <td className="py-3.5 px-4 text-center font-bold text-zinc-400 text-xs align-top">{index + 1}</td>
-                    <td className="py-3.5 px-4 align-top">
+                    <td className="py-2.5 print:py-1.5 px-4 text-center font-bold text-zinc-400 text-xs align-top">{index + 1}</td>
+                    <td className="py-2.5 print:py-1.5 px-4 align-top">
                       <p className="font-bold text-zinc-900">{item.description}</p>
                       {item.warranty && (
-                        <p className="text-[11px] text-zinc-600 mt-1 font-semibold inline-flex items-center gap-1 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
+                        <p className="text-[11px] text-zinc-600 mt-0.5 font-semibold inline-flex items-center gap-1 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
                           <ShieldCheck size={12} className="text-amber-600" /> Warranty: {item.warranty}
                         </p>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-center text-zinc-700 font-medium align-top">₹{item.unit_price.toLocaleString('en-IN')}</td>
-                    <td className="py-3.5 px-4 text-center font-bold text-zinc-800 align-top">{item.quantity}</td>
-                    <td className="py-3.5 px-4 text-right font-bold text-zinc-900 align-top">₹{item.total.toLocaleString('en-IN')}</td>
+                    <td className="py-2.5 print:py-1.5 px-4 text-center text-zinc-700 font-medium align-top">₹{item.unit_price.toLocaleString('en-IN')}</td>
+                    <td className="py-2.5 print:py-1.5 px-4 text-center font-bold text-zinc-800 align-top">{item.quantity}</td>
+                    <td className="py-2.5 print:py-1.5 px-4 text-right font-bold text-zinc-900 align-top">₹{item.total.toLocaleString('en-IN')}</td>
                   </tr>
                 ))}
               </tbody>
@@ -240,29 +254,29 @@ export default function PrintBillPage() {
         </div>
 
         {/* Payment Summary & Authorisation Section */}
-        <div className="flex p-8 pt-2 gap-8 flex-1">
+        <div className="flex p-8 pt-2 print:px-6 print:py-2 gap-8 print:gap-4 flex-1">
           {/* Left Details */}
           <div className="w-3/5 flex flex-col justify-between">
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-3 border-b border-zinc-200 pb-1">Payment Breakdown</h3>
-              <div className="text-xs font-medium text-zinc-700 space-y-2 bg-zinc-50 p-4 rounded-xl border border-zinc-200">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2 border-b border-zinc-200 pb-1">Payment Breakdown</h3>
+              <div className="text-xs font-medium text-zinc-700 space-y-1.5 bg-zinc-50 p-3 rounded-xl border border-zinc-200">
                 {docType === 'Receipt' ? (
                   <>
                     <div className="flex justify-between">
                       <span className="text-zinc-500">Total Order Value:</span>
                       <span className="font-bold text-zinc-900">₹{invoice.total_amount.toLocaleString('en-IN')}</span>
                     </div>
-                    <div className="flex justify-between border-t border-zinc-200 pt-2">
+                    <div className="flex justify-between border-t border-zinc-200 pt-1.5">
                       <span className="text-zinc-500">Amount Received:</span>
                       <span className="font-bold text-emerald-600">₹{invoice.paid_amount.toLocaleString('en-IN')} ({invoice.payment_mode || 'Cash'})</span>
                     </div>
                     {pendingAmount > 0 ? (
-                      <div className="flex justify-between border-t border-zinc-200 pt-2">
+                      <div className="flex justify-between border-t border-zinc-200 pt-1.5">
                         <span className="text-zinc-500">Balance Remaining:</span>
                         <span className="font-bold text-red-600">₹{pendingAmount.toLocaleString('en-IN')}</span>
                       </div>
                     ) : (
-                      <div className="flex justify-between border-t border-zinc-200 pt-2 text-emerald-600 font-bold">
+                      <div className="flex justify-between border-t border-zinc-200 pt-1.5 text-emerald-600 font-bold">
                         <span>Status:</span>
                         <span>✓ FULLY PAID</span>
                       </div>
@@ -286,12 +300,12 @@ export default function PrintBillPage() {
                       <div className="text-red-500 font-bold">No Payments Recorded</div>
                     )}
                     {pendingAmount > 0 ? (
-                      <div className="flex justify-between border-t border-zinc-200 pt-2 text-red-600 font-bold">
+                      <div className="flex justify-between border-t border-zinc-200 pt-1.5 text-red-600 font-bold">
                         <span>Balance Due:</span>
                         <span>₹{pendingAmount.toLocaleString('en-IN')}</span>
                       </div>
                     ) : (
-                      <div className="flex justify-between border-t border-zinc-200 pt-2 text-emerald-600 font-bold">
+                      <div className="flex justify-between border-t border-zinc-200 pt-1.5 text-emerald-600 font-bold">
                         <span>Status:</span>
                         <span>✓ FULLY PAID</span>
                       </div>
@@ -301,38 +315,38 @@ export default function PrintBillPage() {
               </div>
             </div>
 
-            <div className="mt-6">
-              <h4 className="text-sm font-bold text-zinc-900 mb-1">
+            <div className="mt-4 print:mt-2">
+              <h4 className="text-xs font-bold text-zinc-900 mb-0.5">
                 {docType === 'Order Form' ? 'Thank you for your order!' :
                  docType === 'Quotation' ? 'Thank you for considering AR FURNITURE!' :
                  docType === 'Receipt' ? 'Thank you for your payment!' :
                  'Thank you for connecting with AR FURNITURE!'}
               </h4>
-              <p className="text-[11px] text-zinc-500">For queries regarding this document, please contact us at +91 85119 39151.</p>
+              <p className="text-[10px] text-zinc-500">For queries regarding this document, please contact us at +91 85119 39151.</p>
             </div>
           </div>
 
           {/* Right Totals & Signatory */}
           <div className="w-2/5 flex flex-col justify-between text-right">
-            <div className="space-y-2 bg-zinc-50 p-4 rounded-xl border border-zinc-200">
+            <div className="space-y-1.5 bg-zinc-50 p-3 rounded-xl border border-zinc-200">
               <div className="flex justify-between text-xs font-semibold text-zinc-600">
                 <span>Subtotal:</span>
                 <span>₹{invoice.subtotal.toLocaleString('en-IN')}</span>
               </div>
               {invoice.discount > 0 && (
-                <div className="flex justify-between text-xs font-semibold text-zinc-600 border-b border-zinc-200 pb-2">
+                <div className="flex justify-between text-xs font-semibold text-zinc-600 border-b border-zinc-200 pb-1">
                   <span>Discount:</span>
                   <span>- ₹{invoice.discount.toLocaleString('en-IN')}</span>
                 </div>
               )}
 
-              <div className={`flex justify-between items-center px-4 py-3 rounded-xl shadow-xs mt-2 ${theme.totalBg}`}>
+              <div className={`flex justify-between items-center px-3 py-2 rounded-xl shadow-xs mt-1 ${theme.totalBg}`}>
                 <span className="font-bold text-xs uppercase tracking-wider">GRAND TOTAL</span>
-                <span className="font-black text-lg">₹{invoice.total_amount.toLocaleString('en-IN')}</span>
+                <span className="font-black text-base">₹{invoice.total_amount.toLocaleString('en-IN')}</span>
               </div>
 
               {pendingAmount > 0 && (
-                <div className="flex justify-between items-center bg-red-50 text-red-700 px-3 py-2 rounded-lg text-xs font-bold mt-2 border border-red-200">
+                <div className="flex justify-between items-center bg-red-50 text-red-700 px-3 py-1.5 rounded-lg text-xs font-bold mt-1 border border-red-200">
                   <span>BALANCE DUE</span>
                   <span>₹{pendingAmount.toLocaleString('en-IN')}</span>
                 </div>
@@ -340,8 +354,8 @@ export default function PrintBillPage() {
             </div>
 
             {/* Gulfam Signature Stamp */}
-            <div className="mt-6 flex flex-col items-center justify-end">
-              <img src="/signature.png" alt="Gulfam Authorized Signature" className="h-14 object-contain mb-[-6px] mix-blend-multiply" />
+            <div className="mt-4 print:mt-2 flex flex-col items-center justify-end">
+              <img src="/signature.png" alt="Gulfam Authorized Signature" className="h-12 object-contain mb-[-6px] mix-blend-multiply" />
               <div className="border-t-2 border-zinc-900 pt-1 w-full text-center">
                 <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider">Authorized Signatory</p>
                 <p className="text-[10px] font-semibold text-zinc-500">AR FURNITURE</p>
@@ -351,10 +365,10 @@ export default function PrintBillPage() {
         </div>
 
         {/* Terms & Footer Note */}
-        <div className="px-8 pb-4 mt-auto">
-          <div className="border-t border-zinc-200 pt-3">
-            <h4 className="text-[10px] font-bold text-zinc-800 uppercase tracking-wider mb-1">Terms & Conditions:</h4>
-            <p className="text-[9px] text-zinc-500 whitespace-pre-wrap leading-snug font-medium">{invoice.terms}</p>
+        <div className="px-8 pb-3 print:px-6 print:pb-2 mt-auto">
+          <div className="border-t border-zinc-200 pt-2">
+            <h4 className="text-[10px] font-bold text-zinc-800 uppercase tracking-wider mb-0.5">Terms & Conditions:</h4>
+            <p className="text-[9px] text-zinc-500 whitespace-pre-wrap leading-tight font-medium">{invoice.terms}</p>
           </div>
         </div>
 
