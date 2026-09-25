@@ -1,14 +1,16 @@
 import Link from 'next/link'
 import { MessageCircle } from 'lucide-react'
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/public'
 import Header from '@/components/Header'
+
+export const revalidate = 3600 // 1 hour caching
 
 export default async function StoreLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
   const { data: categories } = await supabase.from('categories').select('*').eq('is_active', true)
   const { data: settings } = await supabase.from('store_settings').select('*').eq('id', true).maybeSingle()
 

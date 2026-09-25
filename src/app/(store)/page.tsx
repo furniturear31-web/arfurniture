@@ -1,12 +1,12 @@
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/public'
 import Link from 'next/link'
 import { MessageCircle, CheckCircle2, MapPin } from 'lucide-react'
 import Image from 'next/image'
 
 export default async function HomePage() {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
 
   const { data: categories } = await supabase.from('categories').select('*').eq('is_active', true).order('name')
   

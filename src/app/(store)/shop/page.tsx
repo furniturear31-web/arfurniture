@@ -1,6 +1,4 @@
-export const dynamic = 'force-dynamic'
-
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/public'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Filter } from 'lucide-react'
@@ -16,7 +14,7 @@ export default async function ShopPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
 
   const params = await searchParams
   const categorySlug = typeof params.category === 'string' ? params.category : 'sofa'

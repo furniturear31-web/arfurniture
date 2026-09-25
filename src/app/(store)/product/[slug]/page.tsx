@@ -1,11 +1,13 @@
-import { createClient } from '@/lib/supabase/server'
+export const revalidate = 3600
+
+import { createPublicClient } from '@/lib/supabase/public'
 import { notFound } from 'next/navigation'
 import ImageGallery from './ImageGallery'
 import { MessageCircle, ShoppingBag, ShieldCheck, Check } from 'lucide-react'
 import Link from 'next/link'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
   const { slug } = await params
   const { data: product } = await supabase.from('products').select('*').eq('slug', slug).single()
   
@@ -18,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
   const { slug } = await params
 
   const { data: product } = await supabase

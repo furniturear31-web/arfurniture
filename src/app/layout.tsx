@@ -74,6 +74,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Google Analytics - AR Furniture (GA4) */}
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=G-010SDCX8MJ`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-010SDCX8MJ', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
+      </head>
       <body className={inter.className}>
         {children}
       </body>
