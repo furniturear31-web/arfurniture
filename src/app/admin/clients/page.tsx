@@ -38,21 +38,34 @@ export default function ClientsPage() {
     if (invoicesData && invoicesData.length > 0) {
       for (const inv of invoicesData) {
         if (inv.customer_mobile && inv.customer_name) {
-          const exists = currentClients.some(c => c.mobile === inv.customer_mobile)
+          const invCleanMobile = inv.customer_mobile.replace(/\D/g, '').slice(-10)
+          if (!invCleanMobile) continue
+
+          const exists = currentClients.some(c => {
+            const cCleanMobile = (c.mobile || '').replace(/\D/g, '').slice(-10)
+            return (inv.client_id && inv.client_id === c.id) || (cCleanMobile && cCleanMobile === invCleanMobile)
+          })
+
           if (!exists) {
-            const { data: newClient } = await supabase
+            const { data: newClient, error: insErr } = await supabase
               .from('clients')
               .insert({
-                full_name: inv.customer_name,
-                mobile: inv.customer_mobile,
+                full_name: inv.customer_name.trim(),
+                mobile: invCleanMobile,
                 address: inv.customer_address || null,
                 city: 'Vadodara'
               })
               .select()
-              .single()
+              .maybeSingle()
 
             if (newClient) {
               currentClients.push(newClient)
+              // Auto-link client_id back to invoice if missing
+              if (!inv.client_id) {
+                await supabase.from('invoices').update({ client_id: newClient.id }).eq('id', inv.id)
+              }
+            } else if (insErr) {
+              console.error('Auto heal client creation failed:', insErr)
             }
           }
         }
@@ -67,10 +80,13 @@ export default function ClientsPage() {
 
     // 3. 360-Degree Khata / Ledger Calculation per Client
     const ledger: ClientLedger[] = currentClients.map(c => {
+      const cCleanMobile = (c.mobile || '').replace(/\D/g, '').slice(-10)
+
       // Find all invoices linked to this client by ID or Mobile
-      const orders = (invoicesData || []).filter(inv => 
-        inv.client_id === c.id || inv.customer_mobile === c.mobile
-      )
+      const orders = (invoicesData || []).filter(inv => {
+        const invCleanMobile = (inv.customer_mobile || '').replace(/\D/g, '').slice(-10)
+        return (inv.client_id && inv.client_id === c.id) || (invCleanMobile && cCleanMobile && invCleanMobile === cCleanMobile)
+      })
 
       // Total business volume
       const totalBusiness = orders.reduce((sum, inv) => sum + Number(inv.total_amount || 0), 0)
@@ -83,9 +99,10 @@ export default function ClientsPage() {
       }, 0)
 
       // Standalone payments against client mobile
-      const standalonePays = (paymentsData || []).filter(p => 
-        p.client_mobile === c.mobile && (!p.invoice_id || !orders.some(o => o.id === p.invoice_id))
-      )
+      const standalonePays = (paymentsData || []).filter(p => {
+        const pCleanMobile = (p.client_mobile || '').replace(/\D/g, '').slice(-10)
+        return pCleanMobile && cCleanMobile && pCleanMobile === cCleanMobile && (!p.invoice_id || !orders.some(o => o.id === p.invoice_id))
+      })
       const standaloneSum = standalonePays.reduce((acc, p) => acc + Number(p.amount || 0), 0)
 
       const totalPaid = Math.min(totalBusiness, invPaidSum + standaloneSum)

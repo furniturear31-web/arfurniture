@@ -91,21 +91,42 @@ function NewBillBookForm() {
 
     try {
       // 0. Auto-save client to clients table (upsert by mobile)
+      const cleanMobile = customerMobile.replace(/\D/g, '').slice(-10)
       let savedClientId: string | null = prefillClientId
-      if (!savedClientId && customerMobile && customerName) {
+
+      if (!savedClientId && cleanMobile && customerName) {
         const { data: existingClient } = await supabase
           .from('clients')
           .select('id')
-          .eq('mobile', customerMobile)
-          .single()
-        if (existingClient) {
+          .or(`mobile.eq.${cleanMobile},mobile.eq.${customerMobile}`)
+          .maybeSingle()
+
+        if (existingClient?.id) {
           savedClientId = existingClient.id
         } else {
-          const { data: newClient } = await supabase
+          const { data: newClient, error: insClientErr } = await supabase
             .from('clients')
-            .insert({ full_name: customerName, mobile: customerMobile, address: customerAddress || null, city: 'Vadodara' })
-            .select().single()
-          if (newClient) savedClientId = newClient.id
+            .insert({ 
+              full_name: customerName.trim(), 
+              mobile: cleanMobile || customerMobile.trim(), 
+              address: customerAddress ? customerAddress.trim() : null, 
+              city: 'Vadodara' 
+            })
+            .select()
+            .maybeSingle()
+
+          if (newClient?.id) {
+            savedClientId = newClient.id
+          } else if (insClientErr) {
+            console.error('Auto-create client error:', insClientErr)
+            // Fallback: check if client exists after insert attempt
+            const { data: retryClient } = await supabase
+              .from('clients')
+              .select('id')
+              .eq('mobile', cleanMobile)
+              .maybeSingle()
+            if (retryClient?.id) savedClientId = retryClient.id
+          }
         }
       }
 
@@ -125,9 +146,9 @@ function NewBillBookForm() {
       const { data: invoice, error: invError } = await supabase.from('invoices').insert({
         invoice_number: invNum,
         client_id: savedClientId || null,
-        customer_name: customerName,
-        customer_mobile: customerMobile,
-        customer_address: customerAddress,
+        customer_name: customerName.trim(),
+        customer_mobile: cleanMobile || customerMobile.trim(),
+        customer_address: customerAddress ? customerAddress.trim() : null,
         document_type: documentType,
         created_by: createdBy,
         subtotal,
