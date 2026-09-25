@@ -14,13 +14,6 @@ export default async function StoreLayout({
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50 font-sans">
-      {settings?.is_announcement_active && (
-        <div className="bg-amber-600 text-white py-2 px-4 text-sm font-medium tracking-wide marquee-container">
-          <div className="animate-marquee">
-            {settings.announcement_text}
-          </div>
-        </div>
-      )}
       <Header categories={categories || []} />
 
       {/* Main Content */}
