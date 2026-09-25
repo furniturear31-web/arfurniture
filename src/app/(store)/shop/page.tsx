@@ -4,9 +4,10 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Filter } from 'lucide-react'
+import { redirect } from 'next/navigation'
 
 export const metadata = {
-  title: 'Shop All Furniture | AR FURNITURE',
+  title: 'Shop Premium Furniture | AR FURNITURE',
   description: 'Browse our complete collection of premium furniture in Vadodara.',
 }
 
@@ -18,10 +19,21 @@ export default async function ShopPage({
   const supabase = await createClient()
 
   const params = await searchParams
-  const categorySlug = typeof params.category === 'string' ? params.category : null
+  const categorySlug = typeof params.category === 'string' ? params.category : 'sofa'
+  
+  if (!params.category) {
+    redirect('/shop?category=sofa')
+  }
   
   // Fetch categories for filter
-  const { data: categories } = await supabase.from('categories').select('*').eq('is_active', true)
+  const { data: rawCategories } = await supabase.from('categories').select('*').eq('is_active', true)
+  
+  // Sort categories to always show 'sofa' first
+  const categories = rawCategories?.sort((a, b) => {
+    if (a.slug === 'sofa') return -1
+    if (b.slug === 'sofa') return 1
+    return a.name.localeCompare(b.name)
+  }) || []
   
   let query = supabase
     .from('products')
@@ -37,18 +49,15 @@ export default async function ShopPage({
   if (productsError) {
     console.error("SUPABASE ERROR FETCHING PRODUCTS:", productsError)
   }
-  
-  if (!categories || categories.length === 0) {
-    const { error: catError } = await supabase.from('categories').select('*')
-    console.error("SUPABASE ERROR FETCHING CATEGORIES:", catError, "OR EMPTY")
-  }
+
+  const activeCategoryName = categories.find(c => c.slug === categorySlug)?.name || 'Products'
 
   return (
     <div className="bg-zinc-50 py-12 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-baseline md:justify-between mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
-            {categorySlug ? categories?.find(c => c.slug === categorySlug)?.name || 'Products' : 'All Products'}
+            {activeCategoryName}
           </h1>
           <p className="mt-2 text-sm text-zinc-500 md:mt-0">
             Showing {products?.length || 0} result(s)
@@ -56,26 +65,31 @@ export default async function ShopPage({
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Filters */}
+          {/* Sidebar Filters - Sticky and Premium */}
           <aside className="lg:w-64 flex-shrink-0">
-             <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-xs">
-                <div className="flex items-center mb-4">
-                  <Filter className="h-5 w-5 text-amber-600 mr-2" />
-                  <h3 className="font-semibold text-zinc-900">Categories</h3>
+             <div className="sticky top-28 bg-zinc-900 p-6 rounded-2xl shadow-2xl border border-zinc-800">
+                <div className="flex items-center mb-6 border-b border-zinc-800 pb-4">
+                  <Filter className="h-5 w-5 text-amber-500 mr-2" />
+                  <h3 className="font-semibold text-white tracking-wide uppercase text-sm">Collections</h3>
                 </div>
-                <ul className="space-y-3 text-sm">
-                  <li>
-                    <Link href="/shop" className={`${!categorySlug ? 'text-amber-600 font-medium' : 'text-zinc-600 hover:text-amber-600'}`}>
-                      All Categories
-                    </Link>
-                  </li>
-                  {categories?.map(c => (
-                    <li key={c.id}>
-                      <Link href={`/shop?category=${c.slug}`} className={`${categorySlug === c.slug ? 'text-amber-600 font-medium' : 'text-zinc-600 hover:text-amber-600'}`}>
-                        {c.name}
-                      </Link>
-                    </li>
-                  ))}
+                <ul className="space-y-2">
+                  {categories.map(c => {
+                    const isActive = categorySlug === c.slug
+                    return (
+                      <li key={c.id}>
+                        <Link 
+                          href={`/shop?category=${c.slug}`} 
+                          className={`block px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
+                            isActive 
+                              ? 'bg-zinc-800 text-amber-500 shadow-md border-l-4 border-amber-500' 
+                              : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                          }`}
+                        >
+                          {c.name}
+                        </Link>
+                      </li>
+                    )
+                  })}
                 </ul>
              </div>
           </aside>
@@ -135,8 +149,8 @@ export default async function ShopPage({
               <div className="bg-white rounded-xl border border-zinc-200 p-12 text-center">
                 <h3 className="text-lg font-medium text-zinc-900 mb-2">No products found</h3>
                 <p className="text-zinc-500">We couldn't find any products matching your criteria.</p>
-                <Link href="/shop" className="mt-6 inline-block px-4 py-2 bg-zinc-900 text-white rounded-md text-sm font-medium hover:bg-zinc-800">
-                  Clear Filters
+                <Link href="/shop?category=sofa" className="mt-6 inline-block px-6 py-3 bg-zinc-900 text-white rounded-full text-sm font-medium hover:bg-zinc-800 transition-colors">
+                  View Sofas
                 </Link>
               </div>
             )}

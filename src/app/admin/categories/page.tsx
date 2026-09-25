@@ -8,7 +8,13 @@ import { Trash2 } from 'lucide-react'
 
 export default async function CategoriesPage() {
   const supabase = await createClient()
-  const { data: categories } = await supabase.from('categories').select('*').order('created_at', { ascending: false })
+  const { data: rawCategories } = await supabase.from('categories').select('*').order('created_at', { ascending: false })
+
+  const categories = rawCategories?.sort((a, b) => {
+    if (a.slug === 'sofa') return -1
+    if (b.slug === 'sofa') return 1
+    return a.name.localeCompare(b.name)
+  })
 
   return (
     <div className="space-y-8">

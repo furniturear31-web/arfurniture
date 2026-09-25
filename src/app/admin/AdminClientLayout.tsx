@@ -75,7 +75,7 @@ export default function AdminClientLayout({
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center px-3.5 py-3 text-sm font-semibold rounded-xl transition-all ${
                   active
-                    ? 'bg-[#c8941a] text-white shadow-md'
+                    ? 'bg-zinc-800 text-white shadow-inner border-l-4 border-amber-500'
                     : 'text-zinc-400 hover:bg-zinc-800/80 hover:text-white'
                 }`}
               >
