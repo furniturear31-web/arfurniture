@@ -270,12 +270,19 @@ export default function PrintBillPage() {
                   </>
                 ) : (
                   <>
-                    {payments.length > 0 ? payments.map((p, idx) => (
-                      <div key={p.id || idx} className="flex justify-between">
-                        <span className="text-zinc-500">Payment Received:</span>
-                        <span className="font-bold text-zinc-900">₹{p.amount.toLocaleString('en-IN')} ({p.payment_mode})</span>
+                    {payments.length > 0 ? (
+                      payments.map((p, idx) => (
+                        <div key={p.id || idx} className="flex justify-between">
+                          <span className="text-zinc-500">Payment Received:</span>
+                          <span className="font-bold text-zinc-900">₹{p.amount.toLocaleString('en-IN')} ({p.payment_mode || 'Cash'})</span>
+                        </div>
+                      ))
+                    ) : invoice.paid_amount > 0 ? (
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Advance / Paid Amount:</span>
+                        <span className="font-bold text-emerald-600">₹{invoice.paid_amount.toLocaleString('en-IN')} ({invoice.payment_mode || 'Cash'})</span>
                       </div>
-                    )) : (
+                    ) : (
                       <div className="text-red-500 font-bold">No Payments Recorded</div>
                     )}
                     {pendingAmount > 0 ? (
