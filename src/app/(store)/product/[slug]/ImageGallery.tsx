@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 
 export default function ImageGallery({ images, productName }: { images: string[], productName: string }) {
   const [selectedImage, setSelectedImage] = useState(images[0] || '')
@@ -26,18 +27,28 @@ export default function ImageGallery({ images, productName }: { images: string[]
                 selectedImage === img ? 'ring-2 ring-amber-600 opacity-100' : 'ring-1 ring-zinc-200 opacity-70 hover:opacity-100'
               }`}
             >
-              <img src={img} alt={`${productName} thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+              <Image 
+                src={img} 
+                alt={`${productName} thumbnail ${idx + 1}`} 
+                fill
+                sizes="96px"
+                className="object-cover" 
+                loading="lazy"
+              />
             </button>
           ))}
         </div>
       )}
 
       {/* Main Image */}
-      <div className="aspect-square w-full bg-zinc-100 rounded-2xl overflow-hidden border border-zinc-200">
-        <img 
+      <div className="aspect-square w-full bg-zinc-100 rounded-2xl overflow-hidden border border-zinc-200 relative">
+        <Image 
           src={selectedImage} 
           alt={productName} 
-          className="w-full h-full object-cover"
+          fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="object-cover"
+          priority
         />
       </div>
     </div>

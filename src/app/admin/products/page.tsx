@@ -56,10 +56,12 @@ export default async function ProductsPage() {
                   <TableCell>
                     {prod.product_images?.[0]?.image_url ? (
                       <div className="relative h-12 w-12 rounded overflow-hidden">
-                        <img 
+                        <Image 
                           src={prod.product_images[0].image_url} 
                           alt={prod.name}
-                          className="object-cover w-full h-full"
+                          fill
+                          sizes="48px"
+                          className="object-cover"
                         />
                       </div>
                     ) : (

@@ -27,11 +27,18 @@ export default async function CheckoutPage({ params }: { params: Promise<{ produ
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-zinc-900 mb-8 text-center">Checkout</h1>
         
-        <div className="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-xs border border-zinc-200 overflow-hidden">
           <div className="p-6 sm:p-8 bg-zinc-900 text-white flex items-center space-x-6">
             {mainImage ? (
-              <div className="h-24 w-24 rounded-md overflow-hidden bg-white flex-shrink-0">
-                <img src={mainImage.image_url} alt={product.name} className="w-full h-full object-cover" />
+              <div className="h-24 w-24 rounded-md overflow-hidden bg-white flex-shrink-0 relative">
+                <Image
+                  src={mainImage.image_url} 
+                  alt={product.name} 
+                  fill
+                  sizes="96px"
+                  className="object-cover" 
+                  priority
+                />
               </div>
             ) : (
               <div className="h-24 w-24 rounded-md bg-zinc-800 flex items-center justify-center text-xs text-zinc-400 flex-shrink-0">

@@ -21,7 +21,7 @@ export default async function HomePage() {
     '@context': 'https://schema.org',
     '@type': 'FurnitureStore',
     name: 'AR FURNITURE',
-    image: 'https://www.arfurniture.co.in/images/logo.png', // Replace with actual logo URL if available
+    image: 'https://www.arfurniture.co.in/images/logo.png',
     '@id': 'https://www.arfurniture.co.in',
     url: 'https://www.arfurniture.co.in',
     telephone: '+918511939151',
@@ -69,9 +69,10 @@ export default async function HomePage() {
             fill
             className="object-cover opacity-40"
             priority
+            sizes="100vw"
           />
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-20">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-tight">
               Crafting Your <span className="text-amber-500">Dream Spaces</span> With Elegance.
@@ -109,9 +110,16 @@ export default async function HomePage() {
               return indexA - indexB
             }).map(category => (
               <Link key={category.id} href={`/shop?category=${category.slug}`} className="group block text-center">
-                <div className="aspect-square bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden mb-4 relative transition-transform group-hover:-translate-y-1 group-hover:shadow-md">
+                <div className="aspect-square bg-white rounded-2xl shadow-xs border border-zinc-100 overflow-hidden mb-4 relative transition-transform group-hover:-translate-y-1 group-hover:shadow-md">
                    {category.image_url ? (
-                     <img src={category.image_url} alt={category.name} className="w-full h-full object-cover" />
+                     <Image
+                       src={category.image_url}
+                       alt={category.name}
+                       fill
+                       sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+                       className="object-cover"
+                       loading="lazy"
+                     />
                    ) : (
                      <div className="w-full h-full flex items-center justify-center bg-zinc-100 text-zinc-400">No Image</div>
                    )}
@@ -142,20 +150,26 @@ export default async function HomePage() {
               const hoverImage = product.product_images?.find((img: any) => !img.is_main) || product.product_images?.[1]
               
               return (
-                <div key={product.id} className="group flex flex-col bg-white rounded-xl overflow-hidden border border-zinc-100 shadow-sm hover:shadow-lg transition-shadow">
+                <div key={product.id} className="group flex flex-col bg-white rounded-xl overflow-hidden border border-zinc-100 shadow-xs hover:shadow-lg transition-shadow">
                   <Link href={`/product/${product.slug}`} className="aspect-[4/3] sm:aspect-square relative overflow-hidden bg-zinc-100">
                     {mainImage ? (
                       <>
-                        <img 
+                        <Image
                           src={mainImage.image_url} 
                           alt={product.name} 
-                          className={`w-full h-full object-cover transition-all duration-500 ${hoverImage && hoverImage !== mainImage ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          className={`object-cover transition-all duration-500 ${hoverImage && hoverImage !== mainImage ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
+                          loading="lazy"
                         />
                         {hoverImage && hoverImage !== mainImage && (
-                          <img 
+                          <Image
                             src={hoverImage.image_url} 
                             alt={`${product.name} alternate view`} 
-                            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105" 
+                            fill
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            className="object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105" 
+                            loading="lazy"
                           />
                         )}
                       </>
@@ -240,7 +254,7 @@ export default async function HomePage() {
               { name: 'Sneha Shah', role: 'Ahmedabad', review: 'The design consultation was very helpful. They suggested the right fabric for my dining chairs to match my interior. Delivery was on time and flawless.' },
               { name: 'Amit Desai', role: 'Vadodara', review: 'Bought a modern TV unit. The craftsmanship is top-notch. It looks exactly like the 3D design they showed us. Very professional team!' },
             ].map((testimonial, i) => (
-              <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-zinc-100 relative">
+              <div key={i} className="bg-white p-8 rounded-2xl shadow-xs border border-zinc-100 relative">
                 <div className="flex text-amber-500 mb-4">
                   {[...Array(5)].map((_, j) => (
                     <svg key={j} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

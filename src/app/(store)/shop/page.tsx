@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Filter } from 'lucide-react'
 
 export const metadata = {
@@ -57,7 +58,7 @@ export default async function ShopPage({
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Filters */}
           <aside className="lg:w-64 flex-shrink-0">
-             <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-sm">
+             <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-xs">
                 <div className="flex items-center mb-4">
                   <Filter className="h-5 w-5 text-amber-600 mr-2" />
                   <h3 className="font-semibold text-zinc-900">Categories</h3>
@@ -87,20 +88,26 @@ export default async function ShopPage({
                   const mainImage = product.product_images?.find((img:any) => img.is_main) || product.product_images?.[0]
                   const hoverImage = product.product_images?.find((img: any) => !img.is_main) || product.product_images?.[1]
                   return (
-                    <div key={product.id} className="group flex flex-col bg-white rounded-xl overflow-hidden border border-zinc-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div key={product.id} className="group flex flex-col bg-white rounded-xl overflow-hidden border border-zinc-100 shadow-xs hover:shadow-lg transition-shadow">
                       <Link href={`/product/${product.slug}`} className="aspect-[4/3] sm:aspect-square relative overflow-hidden bg-zinc-100">
                         {mainImage ? (
                           <>
-                            <img 
+                            <Image 
                               src={mainImage.image_url} 
                               alt={product.name} 
-                              className={`w-full h-full object-cover transition-all duration-500 ${hoverImage && hoverImage !== mainImage ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
+                              fill
+                              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                              className={`object-cover transition-all duration-500 ${hoverImage && hoverImage !== mainImage ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
+                              loading="lazy"
                             />
                             {hoverImage && hoverImage !== mainImage && (
-                              <img 
+                              <Image 
                                 src={hoverImage.image_url} 
                                 alt={`${product.name} alternate view`} 
-                                className="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105" 
+                                fill
+                                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                className="object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105" 
+                                loading="lazy"
                               />
                             )}
                           </>
